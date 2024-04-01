@@ -61,7 +61,7 @@ const Login = () => {
                 Entrar  
                 </Button>
                 <Typography  >
-                    <Link component={RouterLink} to="/forgotPassword" href="#" >
+                    <Link component={RouterLink} to="forgotPassword" href="#" >
                        Esqueceu a senha?
                     </Link>
                 </Typography>

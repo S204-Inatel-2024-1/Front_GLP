@@ -4,6 +4,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import backgroundImage from './Campus-Inatel-1.jpg';
+import { Link as RouterLink } from 'react-router-dom'; // Importando Link corretamente
+
 
 const Login = () => {
 
@@ -57,15 +59,13 @@ const Login = () => {
                 />
                 <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth >Entrar</Button>
                 <Typography  >
-                    <Link href="#" >
+                    <Link component={RouterLink} to="/forgotPassword" href="#" >
                        Esqueceu a senha?
                     </Link>
                 </Typography>
                 <Typography style={spaceStyle} >
                     Você já tem uma conta?
-                    <Link href="#" >
-                        Cadastre-se
-                    </Link>
+                    <Link component={RouterLink} to="/singup">Cadastre-se</Link>
                 </Typography>
             </Grid>
         </Grid>

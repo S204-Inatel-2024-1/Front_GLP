@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Al
 import Singup from './components/singup';
 import Login from './components/login';
 import PasswordRecovery from './components/forgotPassword';
-import Dashboard from './components/dashboard';
+import Dashboard from './components/dashbord';
 
 function App() {
   return (
@@ -12,8 +12,8 @@ function App() {
         <Routes> 
           <Route path="/singup" element={<Singup />} /> 
           <Route path="/" element={<Login />} /> 
-          <Route path="/forgotPassword" element={<PasswordRecovery />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="forgotPassword" element={<PasswordRecovery />} /> 
+          <Route path="dashboard" element={<Dashboard />} />
         </Routes>
       </div>
     </Router>

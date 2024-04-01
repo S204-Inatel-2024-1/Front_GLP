@@ -65,7 +65,7 @@ const Login = () => {
                 </Typography>
                 <Typography style={spaceStyle} >
                     Você já tem uma conta?
-                    <Link component={RouterLink} to="/singup">Cadastre-se</Link>
+                    <Link component={RouterLink} to="/dashboard">Cadastre-se</Link>
                 </Typography>
             </Grid>
         </Grid>

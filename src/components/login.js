@@ -57,7 +57,9 @@ const Login = () => {
                     }
                     label="Lembre-se"
                 />
-                <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth >Entrar</Button>
+                <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth component={RouterLink} to="/dashboard"> 
+                Entrar  
+                </Button>
                 <Typography  >
                     <Link component={RouterLink} to="/forgotPassword" href="#" >
                        Esqueceu a senha?

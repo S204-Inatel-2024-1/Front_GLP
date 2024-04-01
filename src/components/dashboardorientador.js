@@ -3,13 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { TextField } from '@material-ui/core';
-//import FetinLogo from './Fetinlogo.png'; // Importe o logotipo ou ícone aqui
+import { TextField, Link } from '@material-ui/core';
+//import FetinLogo from './Fetinlogo.png'; 
+import { Link as RouterLink } from 'react-router-dom'; 
+import IconButton from '@material-ui/core/IconButton';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -18,9 +18,6 @@ const useStyles = makeStyles((theme) => ({
   appBar: {
     backgroundColor: '#1976d2',
     color: '#ffffff',
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
   },
   titleContainer: {
     display: 'flex',
@@ -31,10 +28,10 @@ const useStyles = makeStyles((theme) => ({
   title: {
     marginLeft: theme.spacing(1),
   },
-  /*logo: {
+  logo: {
     width: 50,
     height: 'auto',
-  },*/
+  },
   search: {
     position: 'absolute',
     right: theme.spacing(2),
@@ -72,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Dashboard = () => {
+const DashboardOrientador = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
 
@@ -83,12 +80,13 @@ const Dashboard = () => {
   const handleLogoClick = () => {
     // Adicione a ação desejada quando o logotipo for clicado
   };
-  //para por icone <img src={FetinLogo} alt="FETIN INATEL" className={classes.logo} />
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Toolbar>
           <div className={classes.titleContainer} onClick={handleLogoClick}>
+         {/* <img src={FetinLogo} alt="FETIN INATEL" className={classes.logo} />*/}
             <Typography variant="h6" className={classes.title}>
               FETIN INATEL
             </Typography>
@@ -100,7 +98,7 @@ const Dashboard = () => {
               inputProps={{ 'aria-label': 'search' }}
               onChange={handleSearchChange}
             />
-            <IconButton
+               <IconButton component={RouterLink} to="/dashboardadm"
               className={classes.iconButton}
               color="inherit"
               aria-label="search"
@@ -108,22 +106,16 @@ const Dashboard = () => {
               <SearchIcon />
             </IconButton>
           </div>
-          <IconButton
-            edge="start"
-            className={classes.menuButton}
-            color="inherit"
-            aria-label="menu"
-          >
-            <MenuIcon />
-          </IconButton>
         </Toolbar>
       </AppBar>
       <div className={classes.cardContainer}>
         <Card className={classes.card}>
           <CardContent>
             <Typography variant="h6" component="h2">
-              Dados do Projeto
+              Projetos Orientados
             </Typography>
+            {/* Exibir informações de projetos orientados aqui */}
+            {/* Substitua este exemplo de conteúdo pelo conteúdo real dos projetos orientados */}
             <Typography variant="body2" component="p">
               Número: XXXX
             </Typography>
@@ -146,6 +138,8 @@ const Dashboard = () => {
             <Typography variant="h6" component="h2">
               Fase Atual da FETIN
             </Typography>
+            {/* Exibir informações da fase atual da FETIN aqui */}
+            {/* Substitua este exemplo de conteúdo pelo conteúdo real da fase atual da FETIN */}
             <Typography variant="body2" component="p">
               Prazo de Inscrição: DD/MM/AAAA
             </Typography>
@@ -157,9 +151,29 @@ const Dashboard = () => {
             </Typography>
           </CardContent>
         </Card>
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography variant="h6" component="h2">
+              Avaliação das Bancas
+            </Typography>
+            <Link href="#" color="primary" variant="body2">
+              Acesse os formulários de avaliação das bancas
+            </Link>
+          </CardContent>
+        </Card>
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography variant="h6" component="h2">
+              Manual do Orientador
+            </Typography>
+            <Link href="#" color="primary" variant="body2">
+              Acesse o manual do orientador
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default DashboardOrientador;

@@ -20,11 +20,11 @@ const Login = () => {
 
 
     const avatarStyle = { 
-        backgroundColor: '#4169E1', 
+        backgroundColor: '#3874CB', 
         color: 'black' // Defina a cor desejada para o ícone aqui
     };
 
-    const btnstyle = { marginBottom: '15px' };
+    const btnstyle = { marginBottom: '15px', backgroundColor: '#3874CB' };
 
     const gridStyle = {
         backgroundImage: `url(${backgroundImage})`, // Define a imagem de fundo aqui

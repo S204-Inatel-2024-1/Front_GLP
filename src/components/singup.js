@@ -13,10 +13,10 @@ const Singup = () => {
     };
 
     const avatarStyle = { 
-        backgroundColor: '#4169E1', 
+        backgroundColor: '#3874CB', 
         color: 'black' // Defina a cor desejada para o ícone aqui
     };
-    const btnstyle = { margin: '8px 0' };
+    const btnstyle = { margin: '8px 0', backgroundColor: '#3874CB' };
 
     const gridStyle = {
         backgroundImage: `url(${backgroundImage})`,

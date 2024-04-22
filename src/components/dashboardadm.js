@@ -6,12 +6,11 @@ import Typography from '@material-ui/core/Typography';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import Select from '@material-ui/core/Select'; 
 import InputLabel from '@material-ui/core/InputLabel';
-//import FetinLogo from './Fetinlogo.png'; // Importe o logotipo ou ícone aqui
+import FileUpload from './fileUpload'; 
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -60,7 +59,12 @@ const AdminDashboard = () => {
   const handlePhaseChange = (event) => {
     setSelectedPhase(event.target.value);
   };
-  //<img src={FetinLogo} alt="FETIN INATEL" className={classes.logo} />
+
+  const handleFileUpload = (file) => {
+    console.log('Arquivo enviado:', file);
+
+  };
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
@@ -77,8 +81,7 @@ const AdminDashboard = () => {
           <Typography variant="h6" component="h2">
             Importar Planilha
           </Typography>
-          {/* Componente para importar planilha */}
-          {/* Adicione aqui o componente para importar planilha */}
+          <FileUpload onFileUpload={handleFileUpload} />
         </CardContent>
       </Card>
       <Card className={classes.card}>
@@ -87,7 +90,7 @@ const AdminDashboard = () => {
             Inserção Manual de Dados
           </Typography>
           {/* Componente para inserção manual de dados */}
-          {/* Adicione aqui o componente para inserção manual de dados */}
+          {/* componente para inserção manual de dados */}
         </CardContent>
       </Card>
       <Card className={classes.card}>
@@ -96,7 +99,7 @@ const AdminDashboard = () => {
             Projetos Cadastrados
           </Typography>
           {/* Componente para visualização de todos os projetos cadastrados */}
-          {/* Adicione aqui o componente para visualização de todos os projetos cadastrados */}
+          {/* componente para visualização de todos os projetos cadastrados */}
         </CardContent>
       </Card>
       <Card className={classes.card}>
@@ -105,7 +108,7 @@ const AdminDashboard = () => {
             Atualizar Dados do Projeto
           </Typography>
           {/* Componente para atualização dos dados do projeto selecionado */}
-          {/* Adicione aqui o componente para atualização dos dados do projeto selecionado */}
+          {/* componente para atualização dos dados do projeto selecionado */}
         </CardContent>
       </Card>
       <Card className={classes.card}>

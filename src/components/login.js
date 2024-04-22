@@ -59,7 +59,7 @@ const Login = () => {
                 <Button type='submit' color='primary' variant="contained" style={btnstyle} fullWidth component={RouterLink} to="/dashboard"> 
                 Entrar  
                 </Button>
-                <Typography  >
+                <Typography>
                     <Link component={RouterLink} to="forgotPassword" href="#" >
                        Esqueceu a senha?
                     </Link>

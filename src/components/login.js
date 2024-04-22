@@ -6,7 +6,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import backgroundImage from './Campus-Inatel-1.jpg';
 import { Link as RouterLink } from 'react-router-dom'; // Importando Link corretamente
 
-
 const Login = () => {
 
     const paperStyle = {
@@ -45,7 +44,7 @@ const Login = () => {
                     <Avatar style={avatarStyle}><LockOutlinedIcon /></Avatar>
                     <h2>Login</h2>
                 </Grid>
-                <TextField label='Usuário' placeholder='Entre com o usuário' fullWidth required style={spaceStyle} />
+                <TextField label='CPF' placeholder='Entre com o usuário' fullWidth required style={spaceStyle} />
                 <TextField label='Senha' placeholder='Enter com a senha' type='password' fullWidth required style={spaceStyle}/>
                 <FormControlLabel
                     control={

@@ -33,7 +33,9 @@ const Singup = () => {
                     <h2>Criar uma conta</h2>
                 </Grid>
                 <TextField label='Nome completo' placeholder='Entre com seu nome completo' fullWidth required />
-                <TextField label='Usuário' placeholder='Entre com seu usuário' fullWidth required />
+                <TextField label='Curso' placeholder='Entre com seu curso' fullWidth required />
+                <TextField label='Matricula' placeholder='Entre com sua matricula' fullWidth required />
+                <TextField label='CPf' placeholder='Entre com seu CPF' fullWidth required />
                 <TextField label='Email' placeholder='Entre com seu email Inatel' type='email' fullWidth required />
                 <TextField label='Senha' placeholder='Defina uma senha' type='password' fullWidth required />
                 <TextField label='Confirmar senha' placeholder='Confirme sua senha' type='password' fullWidth required />

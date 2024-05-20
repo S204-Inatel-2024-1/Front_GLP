@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom'; // Importe o componente Link como RouterLink
@@ -7,9 +7,9 @@ import * as Papa from 'papaparse';
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'left',
     alignItems: 'center',
-    height: '100vh',
+    height: '10vh',
   },
   buttonContainer: {
     display: 'flex',
@@ -21,9 +21,11 @@ const useStyles = makeStyles((theme) => ({
 const FileUpload = ({ onFileUpload }) => {
   const classes = useStyles();
   const [selectedFile, setSelectedFile] = useState(null);
+  const [projects, setProjects] = useState(null);
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
+    setProjects(null);
   };
 
   const handleUpload = () => {
@@ -36,15 +38,17 @@ const FileUpload = ({ onFileUpload }) => {
     reader.onload = async (e) => {
       const csvData = e.target.result;
       const parsedData = Papa.parse(csvData, { header: true, delimiter: ','});
+      
   
-      if (parsedData.errors.length > 0) {
-        console.error('Erro ao processar CSV:', parsedData.errors);
-        return;
-      }
+      // if (parsedData.errors.length > 0) {
+      //   console.error('Erro ao processar CSV:', parsedData.errors);
+      //   return;
+      // }
   
-      const projects = parsedData.data;
+      setProjects(parsedData.data);
+      //console.log( parsedData.data);
       // Chamar a função onFileUpload e passar os projetos extraídos
-      onFileUpload(projects);
+      onFileUpload( parsedData.data);
     };
   
     reader.readAsText(selectedFile);
@@ -67,13 +71,20 @@ const FileUpload = ({ onFileUpload }) => {
             Selecionar Arquivo
           </Button>
         </label>
-    
-        <RouterLink to="/projects" style={{ textDecoration: 'none' }}>
+        <RouterLink to={{
+      pathname: '/projects',
+      state: { projects: projects }
+    }} style={{ textDecoration: 'none' }}>
           <Button variant="contained" color="primary" onClick={handleUpload} disabled={!selectedFile}>
             Processar e Redirecionar
           </Button>
         </RouterLink>
       </div>
+      <div>
+      
+      <div>
+      </div>
+    </div>
     </div>
   );
 };

@@ -7,7 +7,6 @@ import Dashboard from './components/dashboard';
 import DashboardOrientador from './components/dashboardorientador';
 import AdminDashboard from './components/dashboardadm';
 import ProjectCardsPage from './components/projects';
-import CadastroEquipe from './components/cadastroEquipe';
 
 function App() {
   return (
@@ -21,7 +20,6 @@ function App() {
           <Route path="dashboardOrientador" element={<DashboardOrientador />} />
           <Route path="dashboardadm" element={<AdminDashboard />} />
           <Route path='projects' element={<ProjectCardsPage />} />
-          <Route path='cadastrarEquipe' element={<CadastroEquipe/>} />
         </Routes>
 
       </div>

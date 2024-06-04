@@ -60,13 +60,16 @@ const AdminDashboard = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [equipes, setEquipes] = useState([]);
   const [editingEquipe, setEditingEquipe] = useState(null);
+  const [projects, setProjects] = useState([]);
 
   const handlePhaseChange = (event) => {
     setSelectedPhase(event.target.value);
   };
 
   const handleFileUpload = (file) => {
+    setProjects(file); 
     console.log('Arquivo enviado:', file);
+   
   };
 
   const handleOpenModal = () => {
@@ -182,18 +185,32 @@ const AdminDashboard = () => {
 
             {equipes.map((equipe, index) => (
               <div key={index} style={{ marginBottom: '8px' }}>
-                <span>Equipe {equipe.teamNumber}: {equipe.projectName}</span>
-                <Space style={{ marginLeft: '10px' }}>
+                <Card className={classes.card}>
+                  <CardContent>
+                  <Typography variant="h6" component="h2">
+                  Dados do Projeto:
+                  </Typography>
+                  <Typography >
+                  Inscricao: {equipe.teamNumber}
+                </Typography>
+                    Projeto: {equipe.projectName}
+                    <Typography variant="body2" component="p">
+              Membros da Equipe: {equipe.member1Name}, {equipe.member2Name}, {equipe.member3Name}, {equipe.member4Name}
+            </Typography>
+
+                  <Space style={{ marginLeft: '10px' }}>
                   <Button onClick={() => handleDeleteEquipe(index)} type="primary">Excluir</Button>
                   <Button onClick={() => handleEditEquipe(index)}>Editar</Button>
                 </Space>
+                  </CardContent>
+                </Card>
               </div>
             ))}
           </CardContent>
         </Card>
         <Modal
           title={editingEquipe ? "Editar Equipe" : "Adicionar Equipe"}
-          visible={modalVisible}
+          open={modalVisible}
           onCancel={handleCloseModal}
           footer={null}
         >
@@ -269,9 +286,9 @@ const AdminDashboard = () => {
             </Form.Item>
             <Form.Item
               name="teamStatus"
-              rules={[{ required: true, message: "Por favor, insira o status da equipe (até 30 caracteres)" }]}
+              rules={[{ required: true, message: "Por favor, insira a fase da fetin da equipe (até 30 caracteres)" }]}
             >
-              <Input placeholder="Status da Equipe" maxLength={30} />
+              <Input placeholder="Fase da Fetin" maxLength={30} />
             </Form.Item>
             <Form.Item
               name="parallels"
@@ -279,28 +296,12 @@ const AdminDashboard = () => {
               <Input.TextArea placeholder="Paralelas" maxLength={200} />
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit">
-                Cadastrar
+              <Button color="primary" variant='contained' type="primary" htmlType="submit">
+                Cadastrar/Editar
               </Button>
             </Form.Item>
           </Form>
         </Modal>
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography variant="h6" component="h2">
-              Projetos Cadastrados
-            </Typography>
-            {/* Componente para visualização de todos os projetos cadastrados */}
-          </CardContent>
-        </Card>
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography variant="h6" component="h2">
-              Atualizar Dados do Projeto
-            </Typography>
-            {/* Componente para atualização dos dados do projeto selecionado */}
-          </CardContent>
-        </Card>
         <Card className={classes.card}>
           <CardContent>
             <Typography variant="h6" component="h2">

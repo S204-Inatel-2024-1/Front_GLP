@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -9,8 +9,10 @@ import SearchIcon from '@material-ui/icons/Search';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { TextField } from '@material-ui/core';
-//import FetinLogo from './Fetinlogo.png'; // Importe o logotipo ou ícone aqui
+import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
 import { Link as RouterLink } from 'react-router-dom';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
@@ -31,10 +33,6 @@ const useStyles = makeStyles((theme) => ({
   title: {
     marginLeft: theme.spacing(1),
   },
-  /*logo: {
-    width: 50,
-    height: 'auto',
-  },*/
   search: {
     position: 'absolute',
     right: theme.spacing(2),
@@ -75,6 +73,27 @@ const useStyles = makeStyles((theme) => ({
 const Dashboard = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+          console.error('Token não encontrado.');
+          return;
+        }
+
+        const decodedToken = jwtDecode(token);
+        setUserData(decodedToken);
+      } catch (error) {
+        console.error('Erro ao buscar dados do usuário:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleSearchChange = (event) => {
     setSearch(event.target.value);
@@ -83,7 +102,7 @@ const Dashboard = () => {
   const handleLogoClick = () => {
     // Adicione a ação desejada quando o logotipo for clicado
   };
-  //para por icone <img src={FetinLogo} alt="FETIN INATEL" className={classes.logo} />
+
   return (
     <div className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
@@ -100,11 +119,7 @@ const Dashboard = () => {
               inputProps={{ 'aria-label': 'search' }}
               onChange={handleSearchChange}
             />
-            <IconButton  component={RouterLink} to="/dashboardOrientador"
-              className={classes.iconButton}
-              color="inherit"
-              aria-label="search"
-            >
+            <IconButton component={RouterLink} to="/dashboardOrientador" className={classes.iconButton} color="inherit" aria-label="search">
               <SearchIcon />
             </IconButton>
           </div>
@@ -119,44 +134,48 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
       <div className={classes.cardContainer}>
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography variant="h6" component="h2">
-              Dados do Projeto
-            </Typography>
-            <Typography variant="body2" component="p">
-              Número: XXXX
-            </Typography>
-            <Typography variant="body2" component="p">
-              Título: Nome do Projeto
-            </Typography>
-            <Typography variant="body2" component="p">
-              Membros da Equipe: Nome1, Nome2, Nome3
-            </Typography>
-            <Typography variant="body2" component="p">
-              Orientador: Nome do Orientador
-            </Typography>
-            <Typography variant="body2" component="p">
-              Status: Em Andamento
-            </Typography>
-          </CardContent>
-        </Card>
-        <Card className={classes.card}>
-          <CardContent>
-            <Typography variant="h6" component="h2">
-              Fase Atual da FETIN
-            </Typography>
-            <Typography variant="body2" component="p">
-              Prazo de Inscrição: DD/MM/AAAA
-            </Typography>
-            <Typography variant="body2" component="p">
-              Prazo de Entrega: DD/MM/AAAA
-            </Typography>
-            <Typography variant="body2" component="p">
-              Data da FETIN: DD/MM/AAAA
-            </Typography>
-          </CardContent>
-        </Card>
+        {userData && (
+          <>
+            <Card className={classes.card}>
+              <CardContent>
+                <Typography variant="h6" component="h2">
+                  Dados do Usuário
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Nome: {userData.nome}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Curso: {userData.curso}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Período: {userData.periodo}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  CPF: {userData.cpf}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Matrícula: {userData.matricula}
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card className={classes.card}>
+              <CardContent>
+                <Typography variant="h6" component="h2">
+                  Fase Atual da FETIN
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Prazo de Inscrição: DD/MM/AAAA
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Prazo de Entrega: DD/MM/AAAA
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Data da FETIN: DD/MM/AAAA
+                </Typography>
+              </CardContent>
+            </Card>
+          </>
+        )}
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ function App() {
           <Route path='projects' element={<ProjectCardsPage />} />
           <Route path='cadastrarEquipe' element={<CadastroEquipe/>} />
         </Routes>
+
       </div>
     </Router>
   );

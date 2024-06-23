@@ -10,7 +10,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import { TextField } from '@material-ui/core';
 import axios from 'axios';
-import {jwtDecode} from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode'; // Importar a função diretamente
 import { Link as RouterLink } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
@@ -72,8 +72,8 @@ const useStyles = makeStyles((theme) => ({
 
 const Dashboard = () => {
   const classes = useStyles();
-  const [search, setSearch] = useState('');
   const [userData, setUserData] = useState(null);
+  const [userDetails, setUserDetails] = useState(null); // Estado para armazenar os dados adicionais do usuário
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -87,6 +87,11 @@ const Dashboard = () => {
 
         const decodedToken = jwtDecode(token);
         setUserData(decodedToken);
+
+        // Fazendo uma solicitação ao backend para obter dados adicionais do usuário
+        const response = await axios.get(`https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/users/${decodedToken.cpf}`);
+        console.log(response);
+        setUserDetails(response.data);
       } catch (error) {
         console.error('Erro ao buscar dados do usuário:', error);
       }
@@ -94,10 +99,6 @@ const Dashboard = () => {
 
     fetchUserData();
   }, []);
-
-  const handleSearchChange = (event) => {
-    setSearch(event.target.value);
-  };
 
   const handleLogoClick = () => {
     // Adicione a ação desejada quando o logotipo for clicado
@@ -111,17 +112,6 @@ const Dashboard = () => {
             <Typography variant="h6" className={classes.title}>
               FETIN INATEL
             </Typography>
-          </div>
-          <div className={classes.search}>
-            <TextField
-              className={classes.input}
-              placeholder="Pesquisar..."
-              inputProps={{ 'aria-label': 'search' }}
-              onChange={handleSearchChange}
-            />
-            <IconButton component={RouterLink} to="/dashboardOrientador" className={classes.iconButton} color="inherit" aria-label="search">
-              <SearchIcon />
-            </IconButton>
           </div>
           <IconButton
             edge="start"
@@ -145,17 +135,19 @@ const Dashboard = () => {
                   Nome: {userData.nome}
                 </Typography>
                 <Typography variant="body2" component="p">
-                  Curso: {userData.curso}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  Período: {userData.periodo}
-                </Typography>
-                <Typography variant="body2" component="p">
                   CPF: {userData.cpf}
                 </Typography>
                 <Typography variant="body2" component="p">
                   Matrícula: {userData.matricula}
                 </Typography>
+                <Typography variant="body2" component="p">
+                  Curso: {userData.curso || 'Não especificado'}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Período: {userData.periodo || 'Não especificado'}
+                </Typography>
+                  
+    
               </CardContent>
             </Card>
             <Card className={classes.card}>

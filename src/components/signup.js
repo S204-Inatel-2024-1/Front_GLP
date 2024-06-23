@@ -10,6 +10,7 @@ const Signup = () => {
     const [registration, setRegistration] = useState('');
     const [cpf, setCpf] = useState('');
     const [periodo, setPeriodo] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
@@ -50,6 +51,7 @@ const Signup = () => {
             periodo: parseInt(periodo, 10), // Certifique-se de que é um número
             cpf: cpf,
             matricula: parseInt(registration, 10), // Certifique-se de que é um número
+            email: email,
             senha: password,
         };
 
@@ -78,6 +80,7 @@ const Signup = () => {
             setRegistration('');
             setCpf('');
             setPeriodo(''); // Resetar o campo periodo
+            setEmail('');
             setPassword('');
             setConfirmPassword('');
             
@@ -141,6 +144,14 @@ const Signup = () => {
                         onChange={(e) => setRegistration(e.target.value)}
                     />
                     <TextField
+                        label='Email'
+                        placeholder='Entre com seu email'
+                        fullWidth
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <TextField
                         label='Senha'
                         placeholder='Defina uma senha'
                         type='password'
@@ -171,7 +182,7 @@ const Signup = () => {
                 {message && <Typography color="primary">{message}</Typography>}
                 {error && <Typography color="error">{error}</Typography>}
                 <Typography>
-                    <Link component={RouterLink} to="/login" href="#">
+                    <Link component={RouterLink} to="/" >
                         Já possui uma conta? Sign In
                     </Link>
                 </Typography>

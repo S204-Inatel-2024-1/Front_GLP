@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Grid, Paper, Avatar, TextField, Button, Typography, Link } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import backgroundImage from './Campus-Inatel-1.jpg';
-import { Link as RouterLink } from 'react-router-dom'; // Importando Link corretamente
+import { Link as RouterLink } from 'react-router-dom';
 
 const PasswordRecovery = () => {
     const [email, setEmail] = useState('');
@@ -15,10 +15,11 @@ const PasswordRecovery = () => {
         margin: "20px auto",
     };
 
-    const avatarStyle = { 
-        backgroundColor: '#3874CB', 
+    const avatarStyle = {
+        backgroundColor: '#3874CB',
         color: 'black' // Defina a cor desejada para o ícone aqui
     };
+
     const btnstyle = { margin: '8px 0', backgroundColor: '#3874CB' };
 
     const gridStyle = {
@@ -34,7 +35,7 @@ const PasswordRecovery = () => {
         setError('');
 
         try {
-            const response = await fetch('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/auth', {
+            const response = await fetch('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/auth/forgot-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -83,11 +84,13 @@ const PasswordRecovery = () => {
                 {message && <Typography color="primary">{message}</Typography>}
                 {error && <Typography color="error">{error}</Typography>}
                 <Typography>
-                    <Link component={RouterLink} to="/" href="#">Voltar para o Login</Link>
+                    <Link component={RouterLink} to="/" href="#">
+                        Voltar para o Login
+                    </Link>
                 </Typography>
             </Paper>
         </Grid>
     );
 };
 
-export default PasswordRecovery;
+export default PasswordRecovery; // Certifique-se de exportar o componente corretamente

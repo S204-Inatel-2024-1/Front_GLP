@@ -8,7 +8,6 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Form } from 'antd';
-import { CSVReader } from 'react-papaparse';
 
 import ConfigProvider from 'antd/lib/config-provider';
 
@@ -136,27 +135,6 @@ const AdminDashboard = () => {
     return {};
   };
 
-  const handleForce = (data) => {
-    const parsedData = data.map((item) => ({
-      teamNumber: item.data[0],
-      projectName: item.data[1],
-      member1Name: item.data[2],
-      member1Email: item.data[3],
-      member2Name: item.data[4] || '',
-      member2Email: item.data[5] || '',
-      member3Name: item.data[6] || '',
-      member3Email: item.data[7] || '',
-      member4Name: item.data[8] || '',
-      member4Email: item.data[9] || '',
-      advisorName: item.data[10],
-      advisorEmail: item.data[11],
-      teamStatus: item.data[12],
-      parallels: item.data[13],
-    }));
-
-    setEquipes(parsedData);
-  };
-
   return (
     <ConfigProvider>
       <div>
@@ -173,15 +151,6 @@ const AdminDashboard = () => {
             >
               Adicionar Equipe
             </Button>
-            <CSVReader
-              cssClass="csv-reader-input"
-              onFileLoaded={handleForce}
-              onError={() => {}}
-              inputId="ObiWan"
-              inputStyle={{ color: 'red' }}
-              disabled={false}
-              style={{ margin: '10px' }}
-            />
             {equipes.map((equipe, index) => (
               <div key={index}>
                 <Card style={{ margin: '10px' }}>

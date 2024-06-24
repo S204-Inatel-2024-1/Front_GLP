@@ -48,51 +48,48 @@ const Signup = () => {
         const userData = {
             nome: name,
             curso: course,
-            periodo: parseInt(periodo, 10), // Certifique-se de que é um número
+            periodo: parseInt(periodo, 10) || 0, // Certifique-se de que é um número
             cpf: cpf,
-            matricula: parseInt(registration, 10), // Certifique-se de que é um número
+            matricula: parseInt(registration, 10) || 0, // Certifique-se de que é um número
             email: email,
             senha: password,
         };
-
-        console.log('Sending user data:', userData); // Log para ver os dados sendo enviados
 
         try {
             const response = await fetch('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/user', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(userData),
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Error response data:', errorData); // Log para ver os dados de erro do servidor
                 throw new Error(errorData.message || 'Erro ao criar a conta');
             }
 
-            const data = await response.json().catch(() => ({})); // Adicionando catch para lidar com JSON vazio
-            console.log('Success response data:', data); // Log para ver os dados de sucesso do servidor
-
-            setName('');
-            setCourse('');
-            setRegistration('');
-            setCpf('');
-            setPeriodo(''); // Resetar o campo periodo
-            setEmail('');
-            setPassword('');
-            setConfirmPassword('');
-            
+            const data = await response.json();
             setMessage(data.message || 'Conta criada com sucesso!');
-            // Redirecionar para a tela de login após o sucesso
+            resetForm();
             setTimeout(() => {
-                window.location.href = '/login';
-            }, 3000); // Redirecionar após 3 segundos (opcional)
+                window.location.href = '/login'; // Redirecionar após 3 segundos (opcional)
+            }, 3000);
         } catch (error) {
-            console.error('Error message:', error.message); // Log para ver a mensagem de erro
+            console.error('Erro ao criar conta:', error.message);
             setError(error.message || 'Erro ao criar a conta');
         }
+    };
+
+    const resetForm = () => {
+        setName('');
+        setCourse('');
+        setRegistration('');
+        setCpf('');
+        setPeriodo('');
+        setEmail('');
+        setPassword('');
+        setConfirmPassword('');
     };
 
     return (

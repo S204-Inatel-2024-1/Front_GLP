@@ -73,7 +73,6 @@ const DashboardOrientador = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
   const [projetosOrientador, setProjetosOrientador] = useState([]);
-  const [projetoOrientado, setProjetoOrientado] = useState(null);
   const [orientador, setOrientador] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -83,24 +82,29 @@ const DashboardOrientador = () => {
       try {
         const token = localStorage.getItem('token'); // Recuperar o token do localStorage
 
+        // Decodificar o token para obter o e-mail
+        const decodedToken = parseJwt(token);
+        const email = decodedToken.email; // Extrair o e-mail do payload do token
+
         // Fetching project data
         const projetoResponse = await axios.get(
-          'https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/email@email.com/true',
+          `https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/${email}/true`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setProjetoOrientado(projetoResponse.data);
+        setProjetosOrientador(projetoResponse.data);
 
-        // Fetching orientador data
+        // Fetching orientador data (substitua 'URL_DO_ENDPOINT_PARA_DADOS_DO_ORIENTADOR' pelo endpoint correto)
         const orientadorResponse = await axios.get('URL_DO_ENDPOINT_PARA_DADOS_DO_ORIENTADOR', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setOrientador(orientadorResponse.data);
+
         setLoading(false);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
@@ -117,7 +121,7 @@ const DashboardOrientador = () => {
   };
 
   const handleLogoClick = () => {
-    // Action on logo click if needed
+    // Ação ao clicar no logo, se necessário
   };
 
   const filteredProjetos = projetosOrientador.filter((projeto) =>
@@ -198,6 +202,24 @@ const DashboardOrientador = () => {
       </div>
     </div>
   );
+};
+
+// Função para decodificar o payload do token JWT
+const parseJwt = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+  } catch (e) {
+    return {};
+  }
 };
 
 export default DashboardOrientador;

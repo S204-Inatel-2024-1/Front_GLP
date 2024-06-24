@@ -85,7 +85,7 @@ const AdminDashboard = () => {
     const newEquipe = { ...values };
 
     try {
-      const response = await axios.post('URL_DO_ENDPOINT_PARA_CADASTRO_DE_EQUIPE', newEquipe, {
+      const response = await axios.post('post v1/projetos', newEquipe, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

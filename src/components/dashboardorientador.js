@@ -8,7 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
-import axios from 'axios';
+import Link from '@material-ui/core/Link'; // Import Link from Material-UI
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -157,6 +157,26 @@ const DashboardOrientador = () => {
             </CardContent>
           </Card>
         )}
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography variant="h6" component="h2">
+              Avaliação das Bancas
+            </Typography>
+            <Link href="#" color="primary" variant="body2">
+              Acesse os formulários de avaliação das bancas
+            </Link>
+          </CardContent>
+        </Card>
+        <Card className={classes.card}>
+          <CardContent>
+            <Typography variant="h6" component="h2">
+              Manual do Orientador
+            </Typography>
+            <Link href="#" color="primary" variant="body2">
+              Acesse o manual do orientador
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

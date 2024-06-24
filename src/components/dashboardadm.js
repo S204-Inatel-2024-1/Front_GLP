@@ -11,12 +11,13 @@ import {
   Box,
   Grid,
   Select,
-  Input,
+  MenuItem,
 } from '@material-ui/core';
 import { Form } from 'antd';
 import { makeStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import ConfigProvider from 'antd/lib/config-provider';
 import axios from 'axios';
+import Papa from 'papaparse';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,9 +36,8 @@ const useStyles = makeStyles((theme) => ({
   },
   modalContent: {
     maxWidth: 600,
-    overflowY: 'auto',
-    backgroundColor: 'white',
     padding: theme.spacing(4),
+    backgroundColor: 'white',
   },
   appBar: {
     marginBottom: theme.spacing(4),
@@ -50,12 +50,8 @@ const useStyles = makeStyles((theme) => ({
 
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#1976d2',
-    },
-    secondary: {
-      main: '#dc004e',
-    },
+    primary: { main: '#1976d2' },
+    secondary: { main: '#dc004e' },
   },
 });
 
@@ -63,59 +59,34 @@ const AdminDashboard = () => {
   const classes = useStyles();
   const [modalVisible, setModalVisible] = useState(false);
   const [advisorModalVisible, setAdvisorModalVisible] = useState(false);
+  const [bulkModalVisible, setBulkModalVisible] = useState(false);
   const [editingEquipe, setEditingEquipe] = useState(null);
   const [equipes, setEquipes] = useState([]);
-  const [name, setName] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [registration, setRegistration] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [advisorForm, setAdvisorForm] = useState({
+    name: '', cpf: '', registration: '', email: '', password: '', confirmPassword: ''
+  });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
 
-  const handleOpenModal = () => {
-    setModalVisible(true);
-  };
-
+  const handleOpenModal = () => setModalVisible(true);
   const handleCloseModal = () => {
     setModalVisible(false);
     setEditingEquipe(null);
   };
 
-  const handleOpenAdvisorModal = () => {
-    setAdvisorModalVisible(true);
-  };
+  const handleOpenAdvisorModal = () => setAdvisorModalVisible(true);
+  const handleCloseAdvisorModal = () => setAdvisorModalVisible(false);
 
-  const handleCloseAdvisorModal = () => {
-    setAdvisorModalVisible(false);
-  };
+  const handleOpenBulkModal = () => setBulkModalVisible(true);
+  const handleCloseBulkModal = () => setBulkModalVisible(false);
 
   const handleCadastroEquipe = async (values) => {
     const token = localStorage.getItem('token');
-
-    const newEquipe = {
-      teamNumber: values.teamNumber,
-      projectName: values.projectName,
-      member1Name: values.member1Name,
-      member1Email: values.member1Email,
-      member2Name: values.member2Name || '',
-      member2Email: values.member2Email || '',
-      member3Name: values.member3Name || '',
-      member3Email: values.member3Email || '',
-      member4Name: values.member4Name || '',
-      member4Email: values.member4Email || '',
-      advisorName: values.advisorName,
-      advisorEmail: values.advisorEmail,
-      teamStatus: values.teamStatus,
-      parallels: values.parallels || '',
-    };
+    const newEquipe = { ...values };
 
     try {
       const response = await axios.post('URL_DO_ENDPOINT_PARA_CADASTRO_DE_EQUIPE', newEquipe, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 200) {
@@ -123,36 +94,17 @@ const AdminDashboard = () => {
         handleCloseModal();
       }
     } catch (error) {
-      console.error('Erro ao cadastrar equipe:', error);
       setError('Erro ao cadastrar equipe. Tente novamente mais tarde.');
     }
   };
 
   const handleUpdateEquipe = async (values) => {
     const token = localStorage.getItem('token');
-
-    const updatedEquipe = {
-      teamNumber: values.teamNumber,
-      projectName: values.projectName,
-      member1Name: values.member1Name,
-      member1Email: values.member1Email,
-      member2Name: values.member2Name || '',
-      member2Email: values.member2Email || '',
-      member3Name: values.member3Name || '',
-      member3Email: values.member3Email || '',
-      member4Name: values.member4Name || '',
-      member4Email: values.member4Email || '',
-      advisorName: values.advisorName,
-      advisorEmail: values.advisorEmail,
-      teamStatus: values.teamStatus,
-      parallels: values.parallels || '',
-    };
+    const updatedEquipe = { ...values };
 
     try {
       const response = await axios.put(`URL_DO_ENDPOINT_PARA_ATUALIZAR_EQUIPE/${editingEquipe}`, updatedEquipe, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 200) {
@@ -162,7 +114,6 @@ const AdminDashboard = () => {
         handleCloseModal();
       }
     } catch (error) {
-      console.error('Erro ao atualizar equipe:', error);
       setError('Erro ao atualizar equipe. Tente novamente mais tarde.');
     }
   };
@@ -172,9 +123,7 @@ const AdminDashboard = () => {
 
     try {
       const response = await axios.delete(`URL_DO_ENDPOINT_PARA_EXCLUIR_EQUIPE/${index}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (response.status === 200) {
@@ -183,7 +132,6 @@ const AdminDashboard = () => {
         setEquipes(updatedEquipes);
       }
     } catch (error) {
-      console.error('Erro ao excluir equipe:', error);
       setError('Erro ao excluir equipe. Tente novamente mais tarde.');
     }
   };
@@ -198,357 +146,205 @@ const AdminDashboard = () => {
     setMessage('');
     setError('');
     const token = localStorage.getItem('token');
-  
-    if (password !== confirmPassword) {
+
+    if (advisorForm.password !== advisorForm.confirmPassword) {
       setError('As senhas não coincidem');
       return;
     }
-  
-    const newAdvisor = {
-      name,
-      cpf,
-      registration,
-      email,
-      password,
-      course: '0', // Valor padrão para curso
-      period: '0', // Valor padrão para período
-    };
-  
+
+    const newAdvisor = { ...advisorForm, course: '0', period: '0' };
+
     try {
       const response = await axios.post('v1/user/coordenador', newAdvisor, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.status === 200) {
-        setName('');
-        setCpf('');
-        setRegistration('');
-        setEmail('');
-        setPassword('');
-        setConfirmPassword('');
+        setAdvisorForm({ name: '', cpf: '', registration: '', email: '', password: '', confirmPassword: '' });
         setMessage('Orientador cadastrado com sucesso!');
         setError('');
         handleCloseAdvisorModal();
       }
     } catch (error) {
-      console.error('Erro ao cadastrar orientador:', error);
       setError('Erro ao cadastrar orientador. Tente novamente mais tarde.');
     }
   };
 
+  const handleBulkUpload = async (file) => {
+    const token = localStorage.getItem('token');
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const csvData = event.target.result;
+      const parsedData = Papa.parse(csvData, { header: true }).data;
+
+      try {
+        const response = await axios.post('URL_DO_ENDPOINT_PARA_CADASTRO_DE_EQUIPE_EM_LOTE', parsedData, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.status === 200) {
+          setEquipes([...equipes, ...parsedData]);
+          handleCloseBulkModal();
+        }
+      } catch (error) {
+        setError('Erro ao cadastrar equipes em lote. Tente novamente mais tarde.');
+      }
+    };
+    reader.readAsText(file);
+  };
+
   const equipeToStore = (equipeIndex) => {
     if (equipeIndex !== null) {
-      return {
-        teamNumber: equipes[equipeIndex].teamNumber,
-        projectName: equipes[equipeIndex].projectName,
-        member1Name: equipes[equipeIndex].member1Name,
-        member1Email: equipes[equipeIndex].member1Email,
-        member2Name: equipes[equipeIndex].member2Name,
-        member2Email: equipes[equipeIndex].member2Email,
-        member3Name: equipes[equipeIndex].member3Name,
-        member3Email: equipes[equipeIndex].member3Email,
-        member4Name: equipes[equipeIndex].member4Name,
-        member4Email: equipes[equipeIndex].member4Email,
-        advisorName: equipes[equipeIndex].advisorName,
-        advisorEmail: equipes[equipeIndex].advisorEmail,
-        teamStatus: equipes[equipeIndex].teamStatus,
-        parallels: equipes[equipeIndex].parallels || '',
-      };
+      return { ...equipes[equipeIndex] };
     }
-    return {};
+    return {
+      teamNumber: '', projectName: '', member1Name: '', member1Email: '', member2Name: '',
+      member2Email: '', member3Name: '', member3Email: '', member4Name: '', member4Email: '',
+      advisorName: '', advisorEmail: '', teamStatus: '', parallels: ''
+    };
   };
 
   return (
     <ThemeProvider theme={theme}>
       <ConfigProvider>
-        <Box>
+        <div className={classes.root}>
           <AppBar position="static" className={classes.appBar}>
             <Toolbar className={classes.toolbar}>
               <Typography variant="h6">Admin Dashboard</Typography>
-              <Typography variant="h6">Fetin Inatel</Typography>
             </Toolbar>
           </AppBar>
-          <Box className={classes.root}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Card className={classes.card}>
-                  <CardContent>
-                    <Typography variant="h6" component="h2">
-                      Cadastro de Equipe
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleOpenModal}
-                      className={classes.button}
-                    >
-                      Cadastrar nova equipe
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleOpenAdvisorModal}
-                      className={classes.button}
-                    >
-                      Cadastrar orientador
-                    </Button>
-                  </CardContent>
-                </Card>
-                {equipes.map((equipe, index) => (
-                  <Card key={index} className={classes.card}>
-                    <CardContent>
-                      <Typography variant="h6" component="h2">
-                        Equipe {equipe.teamNumber}
-                      </Typography>
-                      <Typography color="textSecondary">Projeto: {equipe.projectName}</Typography>
-                      <Typography color="textSecondary">Status: {equipe.teamStatus}</Typography>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => handleEditEquipe(index)}
-                        className={classes.button}
-                      >
-                        Editar
-                      </Button>
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => handleDeleteEquipe(index)}
-                        className={classes.button}
-                      >
-                        Excluir
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </Grid>
-            </Grid>
-          </Box>
-          <Modal
-            open={modalVisible}
-            onClose={handleCloseModal}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-            className={classes.modal}
-          >
+          <Card className={classes.card}>
+            <CardContent>
+              <Button variant="contained" color="primary" className={classes.button} onClick={handleOpenModal}>
+                Registrar Equipe
+              </Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleOpenAdvisorModal}>
+                Registrar Orientador
+              </Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+            <Button variant="contained" color="primary" className={classes.button} onClick={handleOpenBulkModal}>
+                Registrar Equipes em Lote
+              </Button>
+            </CardContent>
+          </Card>
+          <Modal open={modalVisible} onClose={handleCloseModal} className={classes.modal}>
             <Box className={classes.modalContent}>
-              <Typography variant="h6" id="modal-title">
-                {editingEquipe === null ? 'Cadastro de Equipe' : 'Editar Equipe'}
+              <Typography variant="h6">
+                {editingEquipe !== null ? 'Editar Equipe' : 'Registrar Equipe'}
               </Typography>
-              <Form
-                name="equipe-form"
-                initialValues={equipeToStore(editingEquipe)}
-                onFinish={editingEquipe === null ? handleCadastroEquipe : handleUpdateEquipe}
-              >
-                <Form.Item
-                  label="Número da Equipe"
-                  name="teamNumber"
-                  rules={[{ required: true, message: 'Por favor, insira o número da equipe!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="Nome do Projeto"
-                  name="projectName"
-                  rules={[{ required: true, message: 'Por favor, insira o nome do projeto!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="Nome do Membro 1"
-                  name="member1Name"
-                  rules={[{ required: true, message: 'Por favor, insira o nome do membro 1!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="E-mail do Membro 1"
-                  name="member1Email"
-                  rules={[
-                    { required: true, message: 'Por favor, insira o e-mail do membro 1!' },
-                    { type: 'email', message: 'Por favor, insira um e-mail válido!' },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Nome do Membro 2" name="member2Name">
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="E-mail do Membro 2"
-                  name="member2Email"
-                  rules={[{ type: 'email', message: 'Por favor, insira um e-mail válido!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Nome do Membro 3" name="member3Name">
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="E-mail do Membro 3"
-                  name="member3Email"
-                  rules={[{ type: 'email', message: 'Por favor, insira um e-mail válido!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item label="Nome do Membro 4" name="member4Name">
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="E-mail do Membro 4"
-                  name="member4Email"
-                  rules={[{ type: 'email', message: 'Por favor, insira um e-mail válido!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="Nome do Orientador"
-                  name="advisorName"
-                  rules={[{ required: true, message: 'Por favor, insira o nome do orientador!' }]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="E-mail do Orientador"
-                  name="advisorEmail"
-                  rules={[
-                    { required: true, message: 'Por favor, insira o e-mail do orientador!' },
-                    { type: 'email', message: 'Por favor, insira um e-mail válido!' },
-                  ]}
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item
-                  label="Status da Equipe"
-                  name="teamStatus"
-                  rules={[{ required: true, message: 'Por favor, selecione o status da equipe!' }]}
-                >
-                  <Select>
-                    <Select.Option value="ativo">Ativo</Select.Option>
-                    <Select.Option value="inativo">Inativo</Select.Option>
-                  </Select>
-                </Form.Item>
-                <Form.Item
-                  label="Paralelos"
-                  name="parallels"
-                >
-                  <Input />
-                </Form.Item>
-                <Form.Item>
-                  <Button type="primary" htmlType="submit">
-                    {editingEquipe === null ? 'Cadastrar' : 'Atualizar'}
-                  </Button>
-                  <Button htmlType="button" onClick={handleCloseModal} style={{ marginLeft: '8px' }}>
-                    Cancelar
-                  </Button>
-                </Form.Item>
+              <Form layout="vertical" onFinish={editingEquipe !== null ? handleUpdateEquipe : handleCadastroEquipe}
+                initialValues={equipeToStore(editingEquipe)}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Número da Equipe" name="teamNumber" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Número da Equipe" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Nome do Projeto" name="projectName" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Nome do Projeto" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Nome do Integrante 1" name="member1Name" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Nome do Integrante 1" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Email do Integrante 1" name="member1Email" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Email do Integrante 1" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Nome do Integrante 2" name="member2Name" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Nome do Integrante 2" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Email do Integrante 2" name="member2Email" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Email do Integrante 2" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Nome do Integrante 3" name="member3Name">
+                      <TextField fullWidth placeholder="Nome do Integrante 3" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Email do Integrante 3" name="member3Email">
+                      <TextField fullWidth placeholder="Email do Integrante 3" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Nome do Integrante 4" name="member4Name">
+                      <TextField fullWidth placeholder="Nome do Integrante 4" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Email do Integrante 4" name="member4Email">
+                      <TextField fullWidth placeholder="Email do Integrante 4" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Nome do Orientador" name="advisorName" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Nome do Orientador" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Email do Orientador" name="advisorEmail" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Email do Orientador" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Status da Equipe" name="teamStatus" rules={[{ required: true, message: 'Campo obrigatório' }]}>
+                      <TextField fullWidth placeholder="Status da Equipe" />
+                    </Form.Item>
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <Form.Item label="Paralelos" name="parallels">
+                      <TextField fullWidth placeholder="Paralelos" />
+                    </Form.Item>
+                  </Grid>
+                </Grid>
+                <Button type="submit" variant="contained" color="primary" className={classes.button}>
+                  {editingEquipe !== null ? 'Atualizar' : 'Registrar'}
+                </Button>
               </Form>
+            </Box>
+          </Modal>
+          <Modal open={advisorModalVisible} onClose={handleCloseAdvisorModal} className={classes.modal}>
+            <Box className={classes.modalContent}>
+              <Typography variant="h6">Registrar Orientador</Typography>
+              <form onSubmit={handleAdvisorSignup}>
+                <TextField label="Nome" fullWidth margin="normal" value={advisorForm.name} onChange={(e) => setAdvisorForm({ ...advisorForm, name: e.target.value })} required />
+                <TextField label="CPF" fullWidth margin="normal" value={advisorForm.cpf} onChange={(e) => setAdvisorForm({ ...advisorForm, cpf: e.target.value })} required />
+                <TextField label="Matrícula" fullWidth margin="normal" value={advisorForm.registration} onChange={(e) => setAdvisorForm({ ...advisorForm, registration: e.target.value })} required />
+                <TextField label="Email" fullWidth margin="normal" type="email" value={advisorForm.email} onChange={(e) => setAdvisorForm({ ...advisorForm, email: e.target.value })} required />
+                <TextField label="Senha" fullWidth margin="normal" type="password" value={advisorForm.password} onChange={(e) => setAdvisorForm({ ...advisorForm, password: e.target.value })} required />
+                <TextField label="Confirmar Senha" fullWidth margin="normal" type="password" value={advisorForm.confirmPassword} onChange={(e) => setAdvisorForm({ ...advisorForm, confirmPassword: e.target.value })} required />
+                <Button type="submit" variant="contained" color="primary" className={classes.button}>
+                  Registrar
+                </Button>
+              </form>
+              {message && <Typography color="primary">{message}</Typography>}
               {error && <Typography color="error">{error}</Typography>}
             </Box>
           </Modal>
-          <Modal
-            open={advisorModalVisible}
-            onClose={handleCloseAdvisorModal}
-            aria-labelledby="modal-title"
-            aria-describedby="modal-description"
-            className={classes.modal}
-          >
+          <Modal open={bulkModalVisible} onClose={handleCloseBulkModal} className={classes.modal}>
             <Box className={classes.modalContent}>
-              <Typography variant="h6" id="modal-title">
-                Cadastro de Orientador
-              </Typography>
-              <form onSubmit={handleAdvisorSignup}>
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="name"
-                  label="Nome"
-                  name="name"
-                  autoComplete="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="cpf"
-                  label="CPF"
-                  name="cpf"
-                  autoComplete="cpf"
-                  value={cpf}
-                  onChange={(e) => setCpf(e.target.value)}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="registration"
-                  label="Matrícula"
-                  name="registration"
-                  autoComplete="registration"
-                  value={registration}
-                  onChange={(e) => setRegistration(e.target.value)}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  id="email"
-                  label="E-mail"
-                  name="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="password"
-                  label="Senha"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <TextField
-                  variant="outlined"
-                  margin="normal"
-                  required
-                  fullWidth
-                  name="confirmPassword"
-                  label="Confirmar Senha"
-                  type="password"
-                  id="confirmPassword"
-                  autoComplete="current-password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                >
-                  Cadastrar
-                </Button>
-                {message && <Typography color="primary">{message}</Typography>}
-                {error && <Typography color="error">{error}</Typography>}
-              </form>
+              <Typography variant="h6">Registrar Equipes em Lote</Typography>
+              <input type="file" accept=".csv" onChange={(e) => handleBulkUpload(e.target.files[0])} />
+              {error && <Typography color="error">{error}</Typography>}
             </Box>
           </Modal>
-        </Box>
+        </div>
       </ConfigProvider>
     </ThemeProvider>
   );

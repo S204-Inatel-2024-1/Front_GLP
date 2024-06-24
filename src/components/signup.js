@@ -39,22 +39,22 @@ const Signup = () => {
         e.preventDefault();
         setMessage('');
         setError('');
-
+    
         if (password !== confirmPassword) {
             setError('As senhas não coincidem');
             return;
         }
-
+    
         const userData = {
             nome: name,
             curso: course,
-            periodo: parseInt(periodo, 10) || 0, // Certifique-se de que é um número
+            periodo: parseInt(periodo, 10) || 0,
             cpf: cpf,
-            matricula: parseInt(registration, 10) || 0, // Certifique-se de que é um número
+            matricula: parseInt(registration, 10) || 0,
             email: email,
             senha: password,
         };
-
+    
         try {
             const response = await fetch('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/user', {
                 method: 'POST',
@@ -63,24 +63,29 @@ const Signup = () => {
                 },
                 body: JSON.stringify(userData),
             });
-
+    
             if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Erro ao criar a conta');
+                const errorText = await response.text();
+                throw new Error(errorText || 'Erro ao criar a conta');
             }
-
-            const data = await response.json();
-            setMessage(data.message || 'Conta criada com sucesso!');
-            resetForm();
-            setTimeout(() => {
-                window.location.href = '/login'; // Redirecionar após 3 segundos (opcional)
-            }, 3000);
+    
+            const contentType = response.headers.get('Content-Type');
+            if (contentType && contentType.includes('application/json')) {
+                const data = await response.json();
+                setMessage(data.message || 'Conta criada com sucesso!');
+                resetForm();
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 3000);
+            } else {
+                throw new Error('Resposta do servidor não está no formato JSON');
+            }
         } catch (error) {
-            console.error('Erro ao criar conta:', error.message);
+            console.error('Erro ao criar conta:', error);
             setError(error.message || 'Erro ao criar a conta');
         }
     };
-
+    
     const resetForm = () => {
         setName('');
         setCourse('');
@@ -185,7 +190,7 @@ const Signup = () => {
                 </Typography>
             </Paper>
         </Grid>
-    );
+    );  
 }
 
 export default Signup;

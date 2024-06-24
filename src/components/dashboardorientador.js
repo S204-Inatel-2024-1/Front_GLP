@@ -85,10 +85,11 @@ const DashboardOrientador = () => {
         // Decodificar o token para obter o e-mail
         const decodedToken = parseJwt(token);
         const email = decodedToken.email; // Extrair o e-mail do payload do token
+        console.log('Email do token:', email); // Imprimir o e-mail no console
 
         // Fetching project data
         const projetoResponse = await axios.get(
-          `https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/${email}/true`,
+          `v1/projetos/${email}/true`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

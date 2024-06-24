@@ -156,7 +156,29 @@ const DashboardOrientador = () => {
               </Typography>
             </CardContent>
           </Card>
+          
         )}
+        <Card className={classes.card}>
+              <CardContent>
+                <Typography variant="h6" component="h2">
+                  Dados do Projeto
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Titulo: {'Sensor de movimento'}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Membros: {'Gabriel, Luis, Pedo'}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Orientador: {'Cris'}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Avisos: {''}
+                </Typography>
+                  
+    
+              </CardContent>
+        </Card>
         <Card className={classes.card}>
           <CardContent>
             <Typography variant="h6" component="h2">

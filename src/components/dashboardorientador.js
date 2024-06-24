@@ -81,26 +81,24 @@ const DashboardOrientador = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Authentication
-        const authResponse = await axios.post('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/auth', {
-          // Adicione os dados de autenticação necessários aqui
-        });
-
-        const token = authResponse.data.token;
+        const token = localStorage.getItem('token'); // Recuperar o token do localStorage
 
         // Fetching project data
-        const projetoResponse = await axios.get('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/email@email.com/true', {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const projetoResponse = await axios.get(
+          'https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/email@email.com/true',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         setProjetoOrientado(projetoResponse.data);
 
         // Fetching orientador data
         const orientadorResponse = await axios.get('URL_DO_ENDPOINT_PARA_DADOS_DO_ORIENTADOR', {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
         setOrientador(orientadorResponse.data);
         setLoading(false);
@@ -122,7 +120,7 @@ const DashboardOrientador = () => {
     // Action on logo click if needed
   };
 
-  const filteredProjetos = projetosOrientador.filter(projeto => 
+  const filteredProjetos = projetosOrientador.filter((projeto) =>
     projeto.titulo.toLowerCase().includes(search.toLowerCase())
   );
 

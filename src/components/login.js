@@ -6,6 +6,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import backgroundImage from './Campus-Inatel-1.jpg';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode'; // Importar a biblioteca jwt-decode
 
 const Login = () => {
     const navigate = useNavigate();
@@ -56,9 +57,17 @@ const Login = () => {
         axios.request(config)
             .then((response) => {
                 console.log(JSON.stringify(response.data));
-                const isAdmin = response.data.isAdmin;
-                const isOrientador = response.data.isOrientador;
 
+                const token = response.data.token;
+                setToken(token); // Armazenar o token no estado
+                localStorage.setItem('token', token); // Armazenar o token no localStorage
+
+                const decodedToken = jwtDecode(token); // Decodificar o token
+
+                const isAdmin = decodedToken.isAdmin;
+                const isOrientador = decodedToken.isOrientador;
+
+                // Verificações de tipo de usuário com base no token decodificado
                 if (isAdmin) {
                     console.log('Usuário é administrador.');
                     navigate("/dashboardadm");
@@ -70,7 +79,6 @@ const Login = () => {
                     navigate("/dashboard");
                 }
 
-                setToken(response.data.token); // Armazenar o token no estado
                 setErrorMessage('');
             })
             .catch((error) => {

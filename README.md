@@ -140,7 +140,8 @@ Basta arrastar o arquivo html no navegador para visualiza-lo
 
 ## Visao geral app: 
 
-![Tela Login](/Users/pedrooliveira/Front_GLP/tela1.png)
-![Tela Aluno](/Users/pedrooliveira/Front_GLP/tela2.png)
-![Tela Administrador](/Users/pedrooliveira/Front_GLP/tela3.png)
-![Tela Orientador](/Users/pedrooliveira/Front_GLP/tela4.png)
+![Tela Login](/Front_GLP/tela1.png)
+![Tela Aluno](/Front_GLP/tela2.png)
+![Tela Administrador](/Front_GLP/tela3.png)
+![Tela Orientador](<img width="1440" alt="tela1" src="https://github.com/S204-Inatel-2024-1/Front_GLP/assets/64043606/7fdeffd4-80e4-4221-82fd-36f673410ea3">
+)

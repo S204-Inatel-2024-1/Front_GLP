@@ -4,15 +4,16 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import backgroundImage from './Campus-Inatel-1.jpg';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Importe useNavigate ao invés de useHistory
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const Login = () => {
-    const navigate = useNavigate(); // useNavigate para redirecionamento
+    const navigate = useNavigate();
 
     const [cpf, setCPF] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const [token, setToken] = useState(null); // Estado para armazenar o token
 
     const paperStyle = {
         padding: 70,
@@ -31,7 +32,7 @@ const Login = () => {
     const btnstyle = { marginBottom: '15px', backgroundColor: '#3874CB' };
 
     const gridStyle = {
-        backgroundImage: `url(${backgroundImage})`, // Corrigido template literal para url
+        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         height: '100vh',
@@ -42,7 +43,7 @@ const Login = () => {
     const handleLogin = () => {
         console.log('CPF:', cpf, 'Password:', password);
 
-        const credentials = btoa(`${cpf}:${password}`); // Corrigido template literal para base64 encode
+        const credentials = btoa(`${cpf}:${password}`);
         const config = {
             method: 'post',
             url: 'https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/auth',
@@ -58,10 +59,9 @@ const Login = () => {
                 const isAdmin = response.data.isAdmin;
                 const isOrientador = response.data.isOrientador;
 
-                // Redirecionamento baseado no tipo de usuário
                 if (isAdmin) {
                     console.log('Usuário é administrador.');
-                    navigate("/dashboardadm"); // Redirecionamento usando navigate
+                    navigate("/dashboardadm");
                 } else if (isOrientador) {
                     console.log('Usuário é orientador.');
                     navigate("/dashboardOrientador");
@@ -70,7 +70,8 @@ const Login = () => {
                     navigate("/dashboard");
                 }
 
-                setErrorMessage(''); // Limpar mensagem de erro ao fazer login com sucesso
+                setToken(response.data.token); // Armazenar o token no estado
+                setErrorMessage('');
             })
             .catch((error) => {
                 if (error.response) {

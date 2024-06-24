@@ -123,9 +123,11 @@ const Dashboard = () => {
           </IconButton>
         </Toolbar>
       </AppBar>
+
       <div className={classes.cardContainer}>
         {userData && (
           <>
+            
             <Card className={classes.card}>
               <CardContent>
                 <Typography variant="h6" component="h2">
@@ -142,6 +144,27 @@ const Dashboard = () => {
                 </Typography>
                 <Typography variant="body2" component="p">
                   Curso: {userData.curso || 'Não especificado'}
+                </Typography>
+                  
+    
+              </CardContent>
+            </Card>
+            <Card className={classes.card}>
+              <CardContent>
+                <Typography variant="h6" component="h2">
+                  Dados do Projeto
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Titulo: {'Sensor de movimento'}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Membros: {userData.nome}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Orientador: {'Cris'}
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Avisos: {''}
                 </Typography>
                   
     

@@ -72,7 +72,6 @@ const useStyles = makeStyles((theme) => ({
 const DashboardOrientador = () => {
   const classes = useStyles();
   const [search, setSearch] = useState('');
-  const [projetosOrientador, setProjetosOrientador] = useState([]);
   const [orientador, setOrientador] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -80,36 +79,19 @@ const DashboardOrientador = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token'); // Recuperar o token do localStorage
+        const token = localStorage.getItem('token');
+        if (!token) {
+          throw new Error('Token não encontrado');
+        }
 
-        // Decodificar o token para obter o e-mail
         const decodedToken = parseJwt(token);
-        const email = decodedToken.email; // Extrair o e-mail do payload do token
-        console.log('Email do token:', email); // Imprimir o e-mail no console
+        const { nome, cpf, email } = decodedToken; // Extrair dados do orientador do token
 
-        // Fetching project data
-        const projetoResponse = await axios.get(
-          `v1/projetos/${email}/true`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        setProjetosOrientador(projetoResponse.data);
-
-        // Fetching orientador data (substitua 'URL_DO_ENDPOINT_PARA_DADOS_DO_ORIENTADOR' pelo endpoint correto)
-        const orientadorResponse = await axios.get('URL_DO_ENDPOINT_PARA_DADOS_DO_ORIENTADOR', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setOrientador(orientadorResponse.data);
-
+        setOrientador({ nome, cpf, email });
         setLoading(false);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
-        setError('Erro ao carregar dados. Tente novamente mais tarde.');
+        setError(`Erro ao carregar dados: ${error.message}`);
         setLoading(false);
       }
     };
@@ -124,10 +106,6 @@ const DashboardOrientador = () => {
   const handleLogoClick = () => {
     // Ação ao clicar no logo, se necessário
   };
-
-  const filteredProjetos = projetosOrientador.filter((projeto) =>
-    projeto.titulo.toLowerCase().includes(search.toLowerCase())
-  );
 
   if (loading) {
     return <Typography variant="body1">Carregando...</Typography>;
@@ -161,27 +139,6 @@ const DashboardOrientador = () => {
         </Toolbar>
       </AppBar>
       <div className={classes.cardContainer}>
-        {filteredProjetos.map((projeto, index) => (
-          <Card className={classes.card} key={index}>
-            <CardContent>
-              <Typography variant="h6" component="h2">
-                {projeto.titulo}
-              </Typography>
-              <Typography variant="body2" component="p">
-                Número: {projeto.numero}
-              </Typography>
-              <Typography variant="body2" component="p">
-                Membros da Equipe: {projeto.membros.join(', ')}
-              </Typography>
-              <Typography variant="body2" component="p">
-                Orientador: {projeto.orientador}
-              </Typography>
-              <Typography variant="body2" component="p">
-                Status: {projeto.status}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
         {orientador && (
           <Card className={classes.card}>
             <CardContent>

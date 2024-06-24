@@ -146,19 +146,27 @@ const AdminDashboard = () => {
     setMessage('');
     setError('');
     const token = localStorage.getItem('token');
-
+  
     if (advisorForm.password !== advisorForm.confirmPassword) {
       setError('As senhas não coincidem');
       return;
     }
-
-    const newAdvisor = { ...advisorForm, course: '0', period: '0' };
-
+  
+    const newAdvisor = {
+      nome: advisorForm.name,
+      cpf: advisorForm.cpf,
+      matricula: advisorForm.registration,
+      email: advisorForm.email,
+      senha: advisorForm.password,
+      curso: '', // Passando curso como vazio
+      periodo: '', // Passando período como vazio
+    };
+  
     try {
       const response = await axios.post('v1/user/coordenador', newAdvisor, {
         headers: { Authorization: `Bearer ${token}` },
       });
-
+  
       if (response.status === 200) {
         setAdvisorForm({ name: '', cpf: '', registration: '', email: '', password: '', confirmPassword: '' });
         setMessage('Orientador cadastrado com sucesso!');
@@ -166,9 +174,14 @@ const AdminDashboard = () => {
         handleCloseAdvisorModal();
       }
     } catch (error) {
-      setError('Erro ao cadastrar orientador. Tente novamente mais tarde.');
+      if (error.response) {
+        setError(`Erro ao cadastrar orientador: ${error.response.data.message}`);
+      } else {
+        setError('Erro ao cadastrar orientador. Tente novamente mais tarde.');
+      }
     }
   };
+  
 
   const handleBulkUpload = async (file) => {
     const token = localStorage.getItem('token');

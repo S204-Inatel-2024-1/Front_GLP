@@ -143,9 +143,6 @@ const Dashboard = () => {
                 <Typography variant="body2" component="p">
                   Curso: {userData.curso || 'Não especificado'}
                 </Typography>
-                <Typography variant="body2" component="p">
-                  Período: {userData.periodo || 'Não especificado'}
-                </Typography>
                   
     
               </CardContent>

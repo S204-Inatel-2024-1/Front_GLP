@@ -3,12 +3,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import SearchIcon from '@material-ui/icons/Search';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
-import { TextField, Link } from '@material-ui/core';
-import { Link as RouterLink } from 'react-router-dom'; 
+import TextField from '@material-ui/core/TextField';
 import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
 import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -27,10 +26,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     marginLeft: theme.spacing(1),
-  },
-  logo: {
-    width: 50,
-    height: 'auto',
   },
   search: {
     position: 'absolute',
@@ -67,6 +62,11 @@ const useStyles = makeStyles((theme) => ({
       transform: 'scale(1.02)',
     },
   },
+  error: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: theme.spacing(2),
+  },
 }));
 
 const DashboardOrientador = () => {
@@ -75,29 +75,39 @@ const DashboardOrientador = () => {
   const [projetosOrientador, setProjetosOrientador] = useState([]);
   const [projetoOrientado, setProjetoOrientado] = useState(null);
   const [orientador, setOrientador] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Busca dados do projeto do orientado
-        const projetoResponse = await axios.get('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/email@email.com/true');
-        setProjetoOrientado(projetoResponse.data);
-
-        // Autenticação e busca dos dados do orientador
+        // Authentication
         const authResponse = await axios.post('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/auth', {
-          // Dados para autenticação, se necessário
+          // Adicione os dados de autenticação necessários aqui
         });
 
+        const token = authResponse.data.token;
+
+        // Fetching project data
+        const projetoResponse = await axios.get('https://back-core-glp-efcff2d4ee37.herokuapp.com/v1/projetos/email@email.com/true', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        setProjetoOrientado(projetoResponse.data);
+
+        // Fetching orientador data
         const orientadorResponse = await axios.get('URL_DO_ENDPOINT_PARA_DADOS_DO_ORIENTADOR', {
           headers: {
-            Authorization: `Bearer ${authResponse.data.token}`
+            Authorization: `Bearer ${token}`
           }
         });
         setOrientador(orientadorResponse.data);
-
+        setLoading(false);
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
-        // Tratar erro de carregamento, se necessário
+        setError('Erro ao carregar dados. Tente novamente mais tarde.');
+        setLoading(false);
       }
     };
 
@@ -109,8 +119,20 @@ const DashboardOrientador = () => {
   };
 
   const handleLogoClick = () => {
-    // Ação ao clicar no logo (se necessário)
+    // Action on logo click if needed
   };
+
+  const filteredProjetos = projetosOrientador.filter(projeto => 
+    projeto.titulo.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (loading) {
+    return <Typography variant="body1">Carregando...</Typography>;
+  }
+
+  if (error) {
+    return <Typography variant="body1" className={classes.error}>{error}</Typography>;
+  }
 
   return (
     <div className={classes.root}>
@@ -121,30 +143,42 @@ const DashboardOrientador = () => {
               FETIN INATEL
             </Typography>
           </div>
+          <div className={classes.search}>
+            <TextField
+              variant="outlined"
+              placeholder="Buscar projetos..."
+              value={search}
+              onChange={handleSearchChange}
+              className={classes.input}
+            />
+            <IconButton type="submit" className={classes.iconButton} aria-label="search">
+              <SearchIcon />
+            </IconButton>
+          </div>
         </Toolbar>
       </AppBar>
       <div className={classes.cardContainer}>
-        {projetoOrientado && (
-          <Card className={classes.card}>
+        {filteredProjetos.map((projeto, index) => (
+          <Card className={classes.card} key={index}>
             <CardContent>
               <Typography variant="h6" component="h2">
-                {projetoOrientado.titulo}
+                {projeto.titulo}
               </Typography>
               <Typography variant="body2" component="p">
-                Número: {projetoOrientado.numero}
+                Número: {projeto.numero}
               </Typography>
               <Typography variant="body2" component="p">
-                Membros da Equipe: {projetoOrientado.membros.join(', ')}
+                Membros da Equipe: {projeto.membros.join(', ')}
               </Typography>
               <Typography variant="body2" component="p">
-                Orientador: {projetoOrientado.orientador}
+                Orientador: {projeto.orientador}
               </Typography>
               <Typography variant="body2" component="p">
-                Status: {projetoOrientado.status}
+                Status: {projeto.status}
               </Typography>
             </CardContent>
           </Card>
-        )}
+        ))}
         {orientador && (
           <Card className={classes.card}>
             <CardContent>

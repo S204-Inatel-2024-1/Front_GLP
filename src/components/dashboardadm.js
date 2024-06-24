@@ -1,17 +1,63 @@
 import React, { useState } from 'react';
 import {
+  AppBar,
+  Toolbar,
+  Typography,
   Card,
   CardContent,
   Button,
-  Typography,
   Modal,
   TextField,
+  Box,
+  Grid,
 } from '@material-ui/core';
 import { Form } from 'antd';
-
+import { makeStyles, createTheme, ThemeProvider } from '@material-ui/core/styles';
 import ConfigProvider from 'antd/lib/config-provider';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    padding: theme.spacing(2),
+  },
+  card: {
+    marginBottom: theme.spacing(2),
+  },
+  button: {
+    margin: theme.spacing(1, 0),
+  },
+  modal: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalContent: {
+    maxWidth: 600,
+    overflowY: 'auto',
+    backgroundColor: 'white',
+    padding: theme.spacing(4),
+  },
+  appBar: {
+    marginBottom: theme.spacing(4),
+  },
+  toolbar: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+}));
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
+
 const AdminDashboard = () => {
+  const classes = useStyles();
   const [modalVisible, setModalVisible] = useState(false);
   const [advisorModalVisible, setAdvisorModalVisible] = useState(false);
   const [editingEquipe, setEditingEquipe] = useState(null);
@@ -136,314 +182,291 @@ const AdminDashboard = () => {
   };
 
   return (
-    <ConfigProvider>
-      <div>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" component="h2">
-              Cadastro de Equipe
-            </Typography>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleOpenModal}
-              style={{ marginBottom: '16px' }}
-            >
-              Adicionar Equipe
-            </Button>
-            {equipes.map((equipe, index) => (
-              <div key={index}>
-                <Card style={{ margin: '10px' }}>
+    <ThemeProvider theme={theme}>
+      <ConfigProvider>
+        <Box>
+          <AppBar position="static" className={classes.appBar}>
+            <Toolbar className={classes.toolbar}>
+              <Typography variant="h6">Admin Dashboard</Typography>
+              <Typography variant="h6">Fetin Inatel</Typography>
+            </Toolbar>
+          </AppBar>
+          <Box className={classes.root}>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.card}>
                   <CardContent>
-                    <Typography>
-                      Inscrição: {equipe.teamNumber}
+                    <Typography variant="h6" component="h2">
+                      Cadastro de Equipe
                     </Typography>
-                    <Typography>
-                      Nome do Projeto: {equipe.projectName}
-                    </Typography>
-                    <Typography>
-                      Integrante 1: {equipe.member1Name} - Email:{' '}
-                      {equipe.member1Email}
-                    </Typography>
-                    <Typography>
-                      Integrante 2: {equipe.member2Name} - Email:{' '}
-                      {equipe.member2Email}
-                    </Typography>
-                    <Typography>
-                      Integrante 3: {equipe.member3Name} - Email:{' '}
-                      {equipe.member3Email}
-                    </Typography>
-                    <Typography>
-                      Integrante 4: {equipe.member4Name} - Email:{' '}
-                      {equipe.member4Email}
-                    </Typography>
-                    <Typography>
-                      Orientador: {equipe.advisorName} - Email:{' '}
-                      {equipe.advisorEmail}
-                    </Typography>
-                    <Typography>
-                      Status da Equipe: {equipe.teamStatus}
-                    </Typography>
-                    <Typography>Paralelos: {equipe.parallels}</Typography>
-                    <Button
-                      color="secondary"
-                      variant="contained"
-                      onClick={() => handleDeleteEquipe(index)}
-                      style={{ marginTop: '8px', marginRight: '8px' }}
-                    >
-                      Excluir
-                    </Button>
                     <Button
                       color="primary"
                       variant="contained"
-                      onClick={() => handleEditEquipe(index)}
-                      style={{ marginTop: '8px' }}
+                      onClick={handleOpenModal}
+                      className={classes.button}
                     >
-                      Editar
+                      Adicionar Equipe
+                    </Button>
+                    {equipes.map((equipe, index) => (
+                      <Card key={index} className={classes.card}>
+                        <CardContent>
+                          <Typography>Inscrição: {equipe.teamNumber}</Typography>
+                          <Typography>Nome do Projeto: {equipe.projectName}</Typography>
+                          <Typography>
+                            Integrante 1: {equipe.member1Name} - Email: {equipe.member1Email}
+                          </Typography>
+                          <Typography>
+                            Integrante 2: {equipe.member2Name} - Email: {equipe.member2Email}
+                          </Typography>
+                          <Typography>
+                            Integrante 3: {equipe.member3Name} - Email: {equipe.member3Email}
+                          </Typography>
+                          <Typography>
+                            Integrante 4: {equipe.member4Name} - Email: {equipe.member4Email}
+                          </Typography>
+                          <Typography>Orientador: {equipe.advisorName} - Email: {equipe.advisorEmail}</Typography>
+                          <Typography>Status da Equipe: {equipe.teamStatus}</Typography>
+                          <Typography>Paralelos: {equipe.parallels}</Typography>
+                          <Button
+                            color="secondary"
+                            variant="contained"
+                            onClick={() => handleDeleteEquipe(index)}
+                            className={classes.button}
+                          >
+                            Excluir
+                          </Button>
+                          <Button
+                            color="primary"
+                            variant="contained"
+                            onClick={() => handleEditEquipe(index)}
+                            className={classes.button}
+                          >
+                            Editar
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </CardContent>
+                </Card>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Card className={classes.card}>
+                  <CardContent>
+                    <Typography variant="h6" component="h2">
+                      Cadastro de Orientador
+                    </Typography>
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      onClick={handleOpenAdvisorModal}
+                      className={classes.button}
+                    >
+                      Adicionar Orientador
                     </Button>
                   </CardContent>
                 </Card>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent>
-            <Typography variant="h6" component="h2">
-              Cadastro de Orientador
-            </Typography>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleOpenAdvisorModal}
-              style={{ marginBottom: '16px' }}
+              </Grid>
+            </Grid>
+            <Modal
+              open={modalVisible}
+              onClose={handleCloseModal}
+              className={classes.modal}
             >
-              Adicionar Orientador
-            </Button>
-          </CardContent>
-        </Card>
-        <Modal
-          open={modalVisible}
-          onClose={handleCloseModal}
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Card style={{ maxWidth: 600, overflowY: 'auto', backgroundColor: 'white', padding: '16px' }}>
-            <CardContent>
-              <Typography variant="h6" component="h2">
-                {editingEquipe === null ? 'Adicionar Equipe' : 'Editar Equipe'}
-              </Typography>
-              <Form
-                name="cadastroEquipe"
-                onFinish={editingEquipe === null ? handleCadastroEquipe : handleUpdateEquipe}
-                initialValues={equipeToStore(editingEquipe)}
-              >
-                <Form.Item
-                  name="teamNumber"
-                  label="Número da Equipe"
-                  rules={[{ required: true, message: 'Informe o número da equipe' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="projectName"
-                  label="Nome do Projeto"
-                  rules={[{ required: true, message: 'Informe o nome do projeto' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="member1Name"
-                  label="Nome do Integrante 1"
-                  rules={[{ required: true, message: 'Informe o nome do integrante 1' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="member1Email"
-                  label="E-mail do Integrante 1"
-                  rules={[
-                    { required: true, message: 'Informe o e-mail do integrante 1' },
-                    { type: 'email', message: 'E-mail inválido' },
-                  ]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item name="member2Name" label="Nome do Integrante 2">
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="member2Email"
-                  label="E-mail do Integrante 2"
-                  rules={[{ type: 'email', message: 'E-mail inválido' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item name="member3Name" label="Nome do Integrante 3">
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="member3Email"
-                  label="E-mail do Integrante 3"
-                  rules={[{ type: 'email', message: 'E-mail inválido' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item name="member4Name" label="Nome do Integrante 4">
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="member4Email"
-                  label="E-mail do Integrante 4"
-                  rules={[{ type: 'email', message: 'E-mail inválido' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="advisorName"
-                  label="Nome do Orientador"
-                  rules={[{ required: true, message: 'Informe o nome do orientador' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="advisorEmail"
-                  label="E-mail do Orientador"
-                  rules={[
-                    { required: true, message: 'Informe o e-mail do orientador' },
-                    { type: 'email', message: 'E-mail inválido' },
-                  ]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="teamStatus"
-                  label="Status da Equipe"
-                  rules={[{ required: true, message: 'Informe o status da equipe' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Form.Item
-                  name="parallels"
-                  label="Paralelos"
-                  rules={[{ required: true, message: 'Informe os paralelos' }]}
-                >
-                  <TextField fullWidth />
-                </Form.Item>
-                <Button type="submit" variant="contained" color="primary">
-                  {editingEquipe === null ? 'Cadastrar' : 'Atualizar'}
-                </Button>
-              </Form>
-            </CardContent>
-          </Card>
-        </Modal>
-        <Modal
-          open={advisorModalVisible}
-          onClose={handleCloseAdvisorModal}
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Card style={{ maxWidth: 600, overflowY: 'auto', backgroundColor: 'white', padding: '16px' }}>
-            <CardContent>
-              <Typography variant="h6" component="h2">
-                Cadastro de Orientador
-              </Typography>
-              <Form name="cadastroOrientador" onFinish={handleAdvisorSignup}>
-                <Form.Item
-                  name="name"
-                  label="Nome"
-                  rules={[{ required: true, message: 'Informe o nome' }]}
-                >
-                  <TextField fullWidth value={name} onChange={(e) => setName(e.target.value)} />
-                </Form.Item>
-                <Form.Item
-                  name="cpf"
-                  label="CPF"
-                  rules={[{ required: true, message: 'Informe o CPF' }]}
-                >
-                  <TextField fullWidth value={cpf} onChange={(e) => setCpf(e.target.value)} />
-                </Form.Item>
-                <Form.Item
-                  name="registration"
-                  label="Matrícula"
-                  rules={[{ required: true, message: 'Informe a matrícula' }]}
-                >
-                  <TextField
-                    fullWidth
-                    value={registration}
-                    onChange={(e) => setRegistration(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="email"
-                  label="E-mail"
-                  rules={[
-                    { required: true, message: 'Informe o e-mail' },
-                    { type: 'email', message: 'E-mail inválido' },
-                  ]}
-                >
-                  <TextField fullWidth value={email} onChange={(e) => setEmail(e.target.value)} />
-                </Form.Item>
-                <Form.Item
-                  name="password"
-                  label="Senha"
-                  rules={[{ required: true, message: 'Informe a senha' }]}
-                >
-                  <TextField
-                    type="password"
-                    fullWidth
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="confirmPassword"
-                  label="Confirme a Senha"
-                  dependencies={['password']}
-                  rules={[
-                    { required: true, message: 'Confirme a senha' },
-                    ({ getFieldValue }) => ({
-                      validator(_, value) {
-                        if (!value || getFieldValue('password') === value) {
-                          return Promise.resolve();
-                        }
-                        return Promise.reject(new Error('As senhas não coincidem'));
-                      },
-                    }),
-                  ]}
-                >
-                  <TextField
-                    type="password"
-                    fullWidth
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </Form.Item>
-                <Button type="submit" variant="contained" color="primary">
-                  Cadastrar
-                </Button>
-                <Typography variant="body1" style={{ marginTop: '8px' }} color="error">
-                  {error}
-                </Typography>
-                <Typography variant="body1" style={{ marginTop: '8px' }} color="primary">
-                  {message}
-                </Typography>
-              </Form>
-            </CardContent>
-          </Card>
-        </Modal>
-      </div>
-    </ConfigProvider>
+              <Card className={classes.modalContent}>
+                <CardContent>
+                  <Typography variant="h6" component="h2">
+                    {editingEquipe === null ? 'Adicionar Equipe' : 'Editar Equipe'}
+                  </Typography>
+                  <Form
+                    name="cadastroEquipe"
+                    onFinish={editingEquipe === null ? handleCadastroEquipe : handleUpdateEquipe}
+                    initialValues={equipeToStore(editingEquipe)}
+                  >
+                    <Form.Item
+                      name="teamNumber"
+                      label="Número da Equipe"
+                      rules={[{ required: true, message: 'Informe o número da equipe' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="projectName"
+                      label="Nome do Projeto"
+                      rules={[{ required: true, message: 'Informe o nome do projeto' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member1Name"
+                      label="Nome do Integrante 1"
+                      rules={[{ required: true, message: 'Informe o nome do integrante 1' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member1Email"
+                      label="Email do Integrante 1"
+                      rules={[{ required: true, message: 'Informe o email do integrante 1' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member2Name"
+                      label="Nome do Integrante 2"
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member2Email"
+                      label="Email do Integrante 2"
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member3Name"
+                      label="Nome do Integrante 3"
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member3Email"
+                      label="Email do Integrante 3"
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member4Name"
+                      label="Nome do Integrante 4"
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="member4Email"
+                      label="Email do Integrante 4"
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="advisorName"
+                      label="Nome do Orientador"
+                      rules={[{ required: true, message: 'Informe o nome do orientador' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="advisorEmail"
+                      label="Email do Orientador"
+                      rules={[{ required: true, message: 'Informe o email do orientador' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="teamStatus"
+                      label="Status da Equipe"
+                      rules={[{ required: true, message: 'Informe o status da equipe' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Form.Item
+                      name="parallels"
+                      label="Paralelos"
+                      rules={[{ required: true, message: 'Informe os paralelos' }]}
+                    >
+                      <TextField fullWidth />
+                    </Form.Item>
+                    <Button
+                      type="submit"
+                      color="primary"
+                      variant="contained"
+                      className={classes.button}
+                    >
+                      {editingEquipe === null ? 'Adicionar' : 'Atualizar'}
+                    </Button>
+                  </Form>
+                </CardContent>
+              </Card>
+            </Modal>
+            <Modal
+              open={advisorModalVisible}
+              onClose={handleCloseAdvisorModal}
+              className={classes.modal}
+            >
+              <Card className={classes.modalContent}>
+                <CardContent>
+                  <Typography variant="h6" component="h2">
+                    Cadastro de Orientador
+                  </Typography>
+                  <form onSubmit={handleAdvisorSignup}>
+                    <TextField
+                      label="Nome"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="CPF"
+                      value={cpf}
+                      onChange={(e) => setCpf(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Matrícula"
+                      value={registration}
+                      onChange={(e) => setRegistration(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Senha"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <TextField
+                      label="Confirmar Senha"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      fullWidth
+                      margin="normal"
+                    />
+                    <Button
+                      type="submit"
+                      color="primary"
+                      variant="contained"
+                      className={classes.button}
+                    >
+                      Cadastrar
+                    </Button>
+                  </form>
+                  {message && (
+                    <Typography color="primary">
+                      {message}
+                    </Typography>
+                  )}
+                  {error && (
+                    <Typography color="error">
+                      {error}
+                    </Typography>
+                  )}
+                </CardContent>
+              </Card>
+            </Modal>
+          </Box>
+        </Box>
+      </ConfigProvider>
+    </ThemeProvider>
   );
 };
 
